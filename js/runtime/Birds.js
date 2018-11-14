@@ -2,8 +2,8 @@ import Sprite from '../base/Sprite.js'
 import Director from '../Director.js'
 import DataBus from '../DataBus.js'
 /**
- * 游戏背景类
- * 提供update和render函数实现无限滚动的背景功能
+ * 小鸟类
+ * 动态切换小鸟图片的起始位置 伪造煽动翅膀效果
  */
 export default class Birds extends Sprite {
   constructor() {

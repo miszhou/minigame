@@ -47,17 +47,18 @@ export default class Main {
     this.director.run()
   }
   listenClick() {
+    // 监听点击屏幕事件
     wx.onTouchStart((e) => {
       this.databus.get('birds').sy = this.databus.get('birds').sy - 10
       this.databus.time = 1
       this.music.playFly()
       if (this.databus.endgame) {
-        console.log('listenClick')
         this.databus.endgame = false
         this.databus.score = 0
         this.init()
       }
     })
+    // 监听音乐被暂停事件
     wx.onAudioInterruptionEnd(function () {
       this.music.playBgm()
     })

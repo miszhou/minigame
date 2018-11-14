@@ -75,6 +75,7 @@ export default class Director {
       if (this.databus.get('pencils').length === 0) {
         this.createPencils()
       }
+      // 当铅笔淡出屏幕左侧则从全局铅笔数组中删除
       if (this.databus.get('pencils')[0].sx + this.databus.get('pencils')[0].width <= 0 && this.databus.get('pencils').length === 4) {
         this.databus.lock = false
         this.databus.get('pencils').shift()
@@ -118,15 +119,11 @@ export default class Director {
       cancelAnimationFrame(this.databus.aniId)
       this.saveScoreToWx()
     }
-    // this.databus.sharedCanvas.width = 400
-    // this.databus.sharedCanvas.height = 200
-    // this.databus.openDataContext.postMessage({
-    //   text: 'hello',
-    //   year: (new Date()).getFullYear()
-    // })
     // this.databus.openDataContext.postMessage({
     //   command: 'render'
     // })
+    // this.databus.sharedCanvas.width = 400
+    // this.databus.sharedCanvas.height = 200
     // this.databus.ctx.drawImage(this.databus.sharedCanvas, 0, 0);
   }
   // 绘制排行榜
@@ -135,15 +132,24 @@ export default class Director {
     // 创造新高分的情况 存入共享数据
     wx.setUserCloudStorage({
       KVDataList: [
-        {key: 'score', value: this.databus.score.toString()}],
+        { key: 'score', value: this.databus.score.toString() }, { key: 'score1', value: this.databus.score.toString() }],
       success: res => {
+        this.databus.sharedCanvas.width = 400
+        this.databus.sharedCanvas.height = 200
         this.databus.openDataContext.postMessage({
           command: 'getCloudStorage'
         })
+        this.createShareCanvas()
       },
       fail: res => {
         console.log(res);
       }
+    });
+  }
+  createShareCanvas(){
+    requestAnimationFrame(() => {
+      this.databus.ctx.drawImage(this.databus.sharedCanvas, 0, 0);
+      this.createShareCanvas()
     });
   }
   static getDirector() {
