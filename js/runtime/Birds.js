@@ -18,7 +18,7 @@ export default class Birds extends Sprite {
   draw(){
     // 循环切换不同小鸟翅膀状态 仿飞动效果 存储一个小鸟初始横坐标数组
     this.birdsarr = [0, 10 + 34 + 9,10 + 34 + 18 + 34 + 9]
-    if (this.director.aniId % 10 === 0) {
+    if (this.databus.time % 10 === 0) {
       if (this.birdindex == 2) {
         this.birdindex = 0
       } else {

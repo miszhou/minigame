@@ -116,15 +116,9 @@ export default class Director {
       this.databus.get('restart').draw()
       this.databus.destory()
       this.music.playExplosion()
-      cancelAnimationFrame(this.databus.aniId)
+      cancelAnimationFrame(this.aniId)
       this.saveScoreToWx()
     }
-    // this.databus.openDataContext.postMessage({
-    //   command: 'render'
-    // })
-    // this.databus.sharedCanvas.width = 400
-    // this.databus.sharedCanvas.height = 200
-    // this.databus.ctx.drawImage(this.databus.sharedCanvas, 0, 0);
   }
   // 绘制排行榜
   // 保存用户游戏数据到微信公享数据
@@ -134,8 +128,13 @@ export default class Director {
       KVDataList: [
         { key: 'score', value: this.databus.score.toString() }, { key: 'score1', value: this.databus.score.toString() }],
       success: res => {
-        this.databus.sharedCanvas.width = 400
-        this.databus.sharedCanvas.height = 200
+        let ratio = wx.getSystemInfoSync().pixelRatio
+        this.databus.sharedCanvas.width = window.innerWidth * ratio
+        this.databus.sharedCanvas.height = window.innerHeight * ratio
+        this.databus.openDataContext.postMessage({
+          command: 'defaultData',
+          newdata: [['innerWidth', window.innerWidth], ['innerHeight', window.innerHeight], ['ratio', ratio]]
+        })
         this.databus.openDataContext.postMessage({
           command: 'getCloudStorage'
         })
@@ -147,10 +146,12 @@ export default class Director {
     });
   }
   createShareCanvas(){
-    requestAnimationFrame(() => {
-      this.databus.ctx.drawImage(this.databus.sharedCanvas, 0, 0);
-      this.createShareCanvas()
-    });
+    if (this.databus.endgame === true) {
+      cancelAnimationFrame(this.shareanid)
+      let ratio = wx.getSystemInfoSync().pixelRatio
+      this.databus.ctx.drawImage(this.databus.sharedCanvas, 0, 0, window.innerWidth * ratio, window.innerHeight * ratio, 0, 0, window.innerWidth, window.innerHeight);
+      this.shareanid = requestAnimationFrame(this.createShareCanvas.bind(this));
+    }
   }
   static getDirector() {
     if (!Director.instance) {
