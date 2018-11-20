@@ -12,9 +12,11 @@ export default class Land extends Sprite {
     this.sx = 0
   }
   draw(){
-    this.sx = this.sx - this.speed
-    if (-this.sx + window.innerWidth >= this.img.width) {
-      this.sx = 0
+    if (!DataBus.getDataBus().endgame) {
+      this.sx = this.sx - this.speed
+      if (-this.sx + window.innerWidth >= this.img.width) {
+        this.sx = 0
+      }
     }
     super.draw(this.img, 0, 0, this.img.width, this.img.height, this.sx, window.innerHeight - this.img.height, this.img.width, this.img.height)
   }

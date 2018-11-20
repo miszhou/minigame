@@ -14,7 +14,6 @@ export default class Sprite{
     this.screenWidth = screenWidth
     this.screenHeight = screenHeight
     this.databus = DataBus.getDataBus()
-    // this.visible = true
   }
   draw(img = this.img, x = this.x, y = this.y, width = this.width, height = this.height, screenx = this.sx, screeny = this.sy, screenWidth = this.screenWidth, screenHeight = this.screenHeight){
     this.databus.ctx.drawImage(
@@ -28,6 +27,22 @@ export default class Sprite{
       screenWidth,
       screenHeight
     )
+  }
+  /**
+ * 简单的碰撞检测定义：
+ * 点击点处于精灵所在的矩形内即可
+ * @param{e} e: 触摸对象
+ */
+  isCollideWith(e) {
+    let spX = e.touches[0].pageX
+    let spY = e.touches[0].pageY
+
+    if (!this.databus.endgame)
+      return false
+    return !!(this.sx <= spX
+      && spX <= this.sx + this.screenWidth
+      && spY >= this.sy
+      && spY <= this.sy + this.screenHeight)
   }
   // 返回image对象
   static getImage(key) {

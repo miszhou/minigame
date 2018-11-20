@@ -7,13 +7,15 @@ export default class Pencil extends Sprite {
   constructor(img, top) {
     super(img, 0, 0, img.width, img.height, window.innerWidth, top, img.width, img.height)
     this.img = img
-    this.speed = this.databus.speed
+    this.databus = DataBus.getDataBus()
     this.top = top
     this.sx = window.innerWidth
   }
   draw(sy = this.sy) {
-    this.sx = this.sx - this.speed
+    if (!this.databus.endgame) {
+      this.sx = this.sx - this.databus.speed
+    }
     this.sy = sy
-    super.draw(this.img, this.x, this.y, this.width, this.height, this.sx - this.speed, sy, this.width, this.height)
+    super.draw(this.img, this.x, this.y, this.width, this.height, this.sx, sy, this.width, this.height)
   }
 }
