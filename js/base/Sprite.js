@@ -14,6 +14,7 @@ export default class Sprite{
     this.screenWidth = screenWidth
     this.screenHeight = screenHeight
     this.databus = DataBus.getDataBus()
+    this.ratio = wx.getSystemInfoSync().pixelRatio
   }
   draw(img = this.img, x = this.x, y = this.y, width = this.width, height = this.height, screenx = this.sx, screeny = this.sy, screenWidth = this.screenWidth, screenHeight = this.screenHeight){
     this.databus.ctx.drawImage(
@@ -22,10 +23,10 @@ export default class Sprite{
       y,
       width,
       height,
-      screenx,
-      screeny,
-      screenWidth,
-      screenHeight
+      screenx * this.ratio,
+      screeny * this.ratio,
+      screenWidth * this.ratio,
+      screenHeight * this.ratio
     )
   }
   /**

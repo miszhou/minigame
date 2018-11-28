@@ -15,6 +15,8 @@ export default class Main {
   constructor(){
     // 之后创建的都是离屏画布
     // const canvas = wx.createCanvas()
+    canvas.width = window.innerWidth * wx.getSystemInfoSync().pixelRatio
+    canvas.height = window.innerHeight * wx.getSystemInfoSync().pixelRatio
     this.ctx = canvas.getContext('2d')
     this.databus = DataBus.getDataBus()
     this.databus.ctx = this.ctx

@@ -8,7 +8,7 @@ let sharemap = new Map()
 let utils = new Utils()
 let background = {
   x: 30,
-  y: 60,
+  y: 100,
   color: '#808080',
   lineheight: 40
 }
@@ -46,8 +46,12 @@ function drawRankList(data) {
 // 实际排行榜绘制
 function drawList(datalist){
   // 背景绘制
+  // 画标题
+  context.fillStyle = '#fff';
+  context.font = 24* map.get('ratio')+'px Arial';
+  context.fillText('好友排行榜', (map.get('innerWidth') - 120) / 2 * map.get('ratio'), 80 * map.get('ratio'))
   context.save()
-  utils.roundRect(context, 30 * map.get('ratio'), 60 * map.get('ratio'), (map.get('innerWidth') - 60) * map.get('ratio'), (map.get('innerHeight') - 250) * map.get('ratio'), 10 * map.get('ratio'), "fill", "#606060")
+  utils.roundRect(context, 30 * map.get('ratio'), 100 * map.get('ratio'), (map.get('innerWidth') - 60) * map.get('ratio'), (100) * map.get('ratio'), 4 * map.get('ratio'), "fill", "#606060")
   datalist.sort(compare('KVDataList'))
   let fontsize = 16 * map.get('ratio')
   datalist.forEach((item, index) => {
@@ -62,7 +66,7 @@ function drawList(datalist){
   })
   context.restore()
   context.save()
-  utils.roundRect(context, 30 * map.get('ratio'), (map.get('innerHeight') - 100) * map.get('ratio'), (map.get('innerWidth') - 60) * map.get('ratio'), (50) * map.get('ratio'), 10 * map.get('ratio'), "fill", "#606060")
+  utils.roundRect(context, 30 * map.get('ratio'), (map.get('innerHeight') - 100) * map.get('ratio'), (map.get('innerWidth') - 60) * map.get('ratio'), (50) * map.get('ratio'), 4 * map.get('ratio'), "fill", "#606060")
   context.fillStyle = "white"
   fontsize = 16 * map.get('ratio')
   context.font = fontsize + "px Courier New bold";

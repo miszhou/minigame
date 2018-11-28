@@ -65,9 +65,6 @@ export default class Director {
   addScore(){
     if (this.databus.get('birds').sx - 10 > this.databus.get('pencils')[0].sx + this.databus.get('pencils')[0].width && !this.databus.lock){
       this.databus.score++
-      // if (this.databus.score % 10 === 0) {
-      //   this.databus.speed++
-      // }
       this.databus.lock = true
     }
   }
@@ -149,9 +146,11 @@ export default class Director {
       // // 绘制陆地
       this.databus.get('land').draw()
       this.bgmask()
-      this.databus.get('restart').draw()
+      if (!this.databus.ranklist) {
+        this.databus.get('restart').draw()
+      }
       let ratio = this.databus.ratio
-      this.databus.ctx.drawImage(this.databus.sharedCanvas, 0, 0, window.innerWidth * ratio, window.innerHeight * ratio, 0, 0, window.innerWidth, window.innerHeight);
+      this.databus.ctx.drawImage(this.databus.sharedCanvas, 0, 0, window.innerWidth * ratio, window.innerHeight * ratio, 0, 0, window.innerWidth * ratio, window.innerHeight * ratio);
       this.shareanid = requestAnimationFrame(this.createShareCanvas.bind(this));
     } else {
       // console.log('游戏开始')
@@ -162,7 +161,7 @@ export default class Director {
   bgmask() {
     this.databus.ctx.globalAlpha = 0.3;
     this.databus.ctx.fillStyle = '#000'
-    this.databus.ctx.fillRect(0, 0, window.innerWidth, window.innerHeight)
+    this.databus.ctx.fillRect(0, 0, window.innerWidth * wx.getSystemInfoSync().pixelRatio, window.innerHeight * wx.getSystemInfoSync().pixelRatio)
     this.databus.ctx.globalAlpha = 1;
   }
   static getDirector() {
