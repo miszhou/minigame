@@ -7,7 +7,7 @@ import DownPencil from './runtime/DownPencil.js'
 export default class Director {
   constructor() {
     this.databus = DataBus.getDataBus()
-    this.music = new Music.getMusic()
+    this.music = Music.getMusic()
   }
   // 创建铅笔
   createPencils() {
@@ -55,6 +55,7 @@ export default class Director {
         &&
         Math.abs(birdborder.y - pencilborder.y) < birdborder.height / 2 + pencilborder.height / 2 //纵向判断
       ) {
+        
         this.databus.endgame = true
         return
       }
@@ -100,10 +101,40 @@ export default class Director {
       // 刷帧
       this.aniId = requestAnimationFrame(() => {
         this.databus.time = this.databus.time + 1
-        cancelAnimationFrame(this.aniId)
+        this.databus.aniId = this.aniId
         this.run()
       })
     } else {
+      cancelAnimationFrame(this.aniId)
+      
+      this.music.playExplosion()
+      
+      this.saveScoreToWx()
+    }
+  }
+  // 绘制排行榜
+  // 保存用户游戏数据到微信公享数据
+  saveScoreToWx () {
+    // 获取当前用户最高分
+    let ratio = this.databus.ratio
+    this.databus.sharedCanvas.width = window.innerWidth * ratio
+    this.databus.sharedCanvas.height = window.innerHeight * ratio
+    this.databus.openDataContext.postMessage({
+      command: 'defaultData',
+      newdata: [['newscore', this.databus.score.toString()], ['innerWidth', window.innerWidth], ['innerHeight', window.innerHeight], ['ratio', ratio]]
+    })
+    this.databus.openDataContext.postMessage({
+      command: 'getMyCloudStorage'
+    })
+    
+    this.bgmask()
+    this.createShareCanvas()
+  }
+  // 游戏暂停状态绘制 点击排行榜时进行 开放域canvas绘制 排行榜显示 
+  createShareCanvas(){
+    // console.log('createShareCanvas')
+    if (this.databus.endgame === true) {
+      // console.log('待开始')
       this.databus.get('background').draw()
       // 绘制铅笔
       this.databus.get('pencils').forEach((value) => {
@@ -111,47 +142,27 @@ export default class Director {
       })
       // 绘制小鸟
       this.databus.get('birds').draw()
-      // 绘制陆地
+
+      // // 绘制陆地
       this.databus.get('land').draw()
-      this.databus.get('restart').draw()
-      this.databus.destory()
-      this.music.playExplosion()
-      cancelAnimationFrame(this.aniId)
-      this.saveScoreToWx()
-    }
-  }
-  // 绘制排行榜
-  // 保存用户游戏数据到微信公享数据
-  saveScoreToWx () {
-    // 创造新高分的情况 存入共享数据
-    wx.setUserCloudStorage({
-      KVDataList: [
-        { key: 'score', value: this.databus.score.toString() }, { key: 'score1', value: this.databus.score.toString() }],
-      success: res => {
-        let ratio = wx.getSystemInfoSync().pixelRatio
-        this.databus.sharedCanvas.width = window.innerWidth * ratio
-        this.databus.sharedCanvas.height = window.innerHeight * ratio
-        this.databus.openDataContext.postMessage({
-          command: 'defaultData',
-          newdata: [['innerWidth', window.innerWidth], ['innerHeight', window.innerHeight], ['ratio', ratio]]
-        })
-        this.databus.openDataContext.postMessage({
-          command: 'getCloudStorage'
-        })
-        this.createShareCanvas()
-      },
-      fail: res => {
-        console.log(res);
+      this.bgmask()
+      if (!this.databus.ranklist) {
+        this.databus.get('restart').draw()
       }
-    });
-  }
-  createShareCanvas(){
-    if (this.databus.endgame === true) {
-      cancelAnimationFrame(this.shareanid)
-      let ratio = wx.getSystemInfoSync().pixelRatio
-      this.databus.ctx.drawImage(this.databus.sharedCanvas, 0, 0, window.innerWidth * ratio, window.innerHeight * ratio, 0, 0, window.innerWidth, window.innerHeight);
+      let ratio = this.databus.ratio
+      this.databus.ctx.drawImage(this.databus.sharedCanvas, 0, 0, window.innerWidth * ratio, window.innerHeight * ratio, 0, 0, window.innerWidth * ratio, window.innerHeight * ratio);
       this.shareanid = requestAnimationFrame(this.createShareCanvas.bind(this));
+    } else {
+      // console.log('游戏开始')
+      cancelAnimationFrame(this.shareanid)
     }
+  }
+  // 背景蒙版
+  bgmask() {
+    this.databus.ctx.globalAlpha = 0.3;
+    this.databus.ctx.fillStyle = '#000'
+    this.databus.ctx.fillRect(0, 0, window.innerWidth * wx.getSystemInfoSync().pixelRatio, window.innerHeight * wx.getSystemInfoSync().pixelRatio)
+    this.databus.ctx.globalAlpha = 1;
   }
   static getDirector() {
     if (!Director.instance) {

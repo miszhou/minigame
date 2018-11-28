@@ -2,6 +2,7 @@
 export default class DataBus{
   constructor(){
     this.map = new Map()
+    this.ratio = wx.getSystemInfoSync().pixelRatio
   }
   set(key, value){
     if (typeof value === 'function'){

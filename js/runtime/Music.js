@@ -27,7 +27,7 @@ export default class Music {
   // 撞击
   playExplosion() {
     this.boomAudio.currentTime = 0
-    this.boomAudio.play()
+    // this.boomAudio.play()
   }
   
   static getMusic() {
